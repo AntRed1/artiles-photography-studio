@@ -1,53 +1,56 @@
-import React from 'react';
-import { packages } from '../data/packages';
+import React, { useState, useEffect } from 'react';
+import { getActivePackages } from '../services/packageService';
+import { PhotographyPackage } from '../types';
 
 const Packages: React.FC = () => {
+  const [packages, setPackages] = useState<PhotographyPackage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const data = await getActivePackages();
+        setPackages(data);
+        setLoading(false);
+      } catch (err) {
+        setError('Error al cargar los paquetes');
+        setLoading(false);
+      }
+    };
+    void fetchPackages();
+  }, []);
+
+  if (loading) return <div>Cargando paquetes...</div>;
+  if (error) return <div>{error}</div>;
+  if (packages.length === 0) return <div>No hay paquetes disponibles</div>;
+
   return (
-    <section id="paquetes" className="py-16 md:py-24">
+    <section id="paquetes" className="py-16">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Paquetes Fotográficos
-          </h2>
-          <p className="max-w-2xl mx-auto text-lg text-gray-700">
-            Selecciona el paquete que mejor se adapte a tus necesidades.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-center mb-12">
+          Nuestros Paquetes
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {packages.map(pkg => (
             <div
               key={pkg.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:transform hover:scale-105"
+              className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <img
-                src={pkg.image}
+                src={pkg.imageUrl}
                 alt={pkg.title}
                 className="w-full h-48 object-cover"
               />
               <div className="p-6">
-                <h3 className="text-2xl font-bold text-center mb-2">
-                  {pkg.title}
-                </h3>
-                <p className="text-gray-600 text-center mb-4">
-                  {pkg.description}
+                <h3 className="text-xl font-bold mb-2">{pkg.title}</h3>
+                <p className="text-gray-600 mb-4">{pkg.description}</p>
+                <p className="text-lg font-semibold text-red-600 mb-4">
+                  ${pkg.price}
                 </p>
-                <ul className="space-y-3 mb-6">
-                  {pkg.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <i className="fa-solid fa-check text-green-500 mr-2"></i>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href={`https://wa.me/18095557890?text=Hola, estoy interesado/a en el ${pkg.title}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full px-6 py-3 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-colors duration-300 text-center !rounded-button whitespace-nowrap"
-                >
-                  <i className="fab fa-whatsapp mr-2"></i>
-                  Reservar por WhatsApp
-                </a>
+                <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                  Reservar Ahora
+                </button>
               </div>
             </div>
           ))}
