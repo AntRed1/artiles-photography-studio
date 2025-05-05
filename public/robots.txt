@@ -1,3 +1,9 @@
-# https://www.robotstxt.org/robotstxt.html
+# robots.txt for Artiles Photography Studio
+# Allows search engines to crawl the entire site
+# Learn more: https://www.robotstxt.org/robotstxt.html
+
 User-agent: *
-Disallow:
+Disallow: # Allow all paths to be crawled
+
+# Optional: Reference to sitemap (uncomment if you create a sitemap.xml)
+Sitemap: https://www.artilesphotographystudio.com/sitemap.xml
