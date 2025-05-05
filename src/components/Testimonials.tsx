@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getTestimonials } from '../services/testimonialService';
 import { Testimonial } from '../types';
-import {
-  getAllTestimonials,
-  addTestimonial,
-} from '../services/testimonialService';
 
 const Testimonials: React.FC = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -13,64 +10,54 @@ const Testimonials: React.FC = () => {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const data = await getAllTestimonials();
+        const data = await getTestimonials();
         setTestimonials(data);
         setLoading(false);
       } catch (err) {
-        setError('Error al cargar testimonios');
+        setError('Error al cargar los testimonios');
         setLoading(false);
       }
     };
-
-    void fetchTestimonials();
+    fetchTestimonials();
   }, []);
 
-  const handleAddTestimonial = async () => {
-    const newTestimonial: Testimonial = {
-      id: testimonials.length + 1,
-      name: 'Nuevo Cliente',
-      rating: 5,
-      message: '¡Gran servicio!',
-      createdAt: new Date().toISOString(),
-    };
+  if (loading) {
+    return <div className="text-center py-16">Cargando...</div>;
+  }
 
-    try {
-      const savedTestimonial = await addTestimonial(newTestimonial);
-      setTestimonials([...testimonials, savedTestimonial]);
-    } catch (err) {
-      setError('Error al añadir testimonio');
-    }
-  };
-
-  if (loading) return <div>Cargando...</div>;
-  if (error) return <div>{error}</div>;
+  if (error) {
+    return <div className="text-center py-16 text-red-600">{error}</div>;
+  }
 
   return (
-    <section className="py-12">
+    <section id="testimonios" className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">Testimonios</h2>
-        <button
-          onClick={handleAddTestimonial}
-          className="mb-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Añadir Testimonio
-        </button>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Testimonios</h2>
+          <p className="max-w-2xl mx-auto text-lg text-gray-700">
+            Lo que nuestros clientes dicen sobre nosotros.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map(testimonial => (
             <div
               key={testimonial.id}
-              className="bg-white p-6 rounded-lg shadow-lg"
+              className="bg-gray-50 rounded-lg shadow-md p-6"
             >
-              <h3 className="text-lg font-semibold mb-2">{testimonial.name}</h3>
-              <p className="text-gray-600 mb-2">{testimonial.message}</p>
-              <p className="text-yellow-500">
-                {'★'.repeat(testimonial.rating)}
-              </p>
-              {testimonial.createdAt && (
-                <p className="text-sm text-gray-500">
-                  {new Date(testimonial.createdAt).toLocaleDateString()}
-                </p>
-              )}
+              <p className="text-gray-600 mb-4">{testimonial.message}</p>
+              <div className="flex items-center">
+                <div>
+                  <p className="font-semibold">{testimonial.name}</p>
+                  <div className="flex">
+                    {Array.from({ length: testimonial.rating }, (_, i) => (
+                      <i
+                        key={i}
+                        className="fa-solid fa-star text-yellow-400"
+                      ></i>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>

@@ -1,7 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getContactInfo } from '../services/contactInfoService';
+import { ContactInfo } from '../types';
 
 const WhatsAppButton: React.FC = () => {
   const [showWhatsappTooltip, setShowWhatsappTooltip] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const data: ContactInfo = await getContactInfo();
+        setWhatsappNumber(data.whatsapp);
+        setLoading(false);
+      } catch (err) {
+        setError('Error al cargar el número de WhatsApp');
+        setLoading(false);
+      }
+    };
+    fetchContactInfo();
+  }, []);
+
+  // Fallback number in case of error or no data
+  const whatsappLink = `https://wa.me/${whatsappNumber}`;
+
+  // Don't render the button if loading or error occurs, to avoid broken UI
+  if (loading || error) {
+    return null; // Optionally, render a fallback UI
+  }
 
   return (
     <div
@@ -10,7 +37,7 @@ const WhatsAppButton: React.FC = () => {
       onMouseLeave={() => setShowWhatsappTooltip(false)}
     >
       <a
-        href="https://wa.me/18095557890"
+        href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
         className="block w-14 h-14 bg-green-500 rounded-full shadow-lg hover:bg-green-600 transition-colors duration-300 relative"

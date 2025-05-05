@@ -55,9 +55,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
                     className="text-2xl focus:outline-none"
                   >
                     <i
-                      className={`fa-solid fa-star ${
-                        star <= rating ? 'text-yellow-400' : 'text-gray-300'
-                      }`}
+                      className={`fa-solid fa-star ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
                     ></i>
                   </button>
                 ))}

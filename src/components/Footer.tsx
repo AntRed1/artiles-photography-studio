@@ -20,8 +20,7 @@ const Footer: React.FC = () => {
         setLoading(false);
       }
     };
-
-    void fetchContactInfo();
+    fetchContactInfo();
   }, []);
 
   return (
@@ -29,7 +28,9 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-lg font-semibold mb-4">Artiles Photography Studio</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Artiles Photography Studio
+            </h3>
             <p className="text-sm">
               Capturando momentos inolvidables desde 2013.
             </p>
@@ -74,16 +75,18 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contacto</h3>
             {loading ? (
-              <div>Cargando...</div>
-            ) : error ? (
-              <div>{error}</div>
+              <div className="text-sm">Cargando...</div>
+            ) : error || !contactInfo ? (
+              <div className="text-sm text-red-400">
+                {error || 'No hay información disponible'}
+              </div>
             ) : (
               <>
-                <p className="text-sm mb-2">Teléfono: {contactInfo?.phone}</p>
-                <p className="text-sm mb-2">Email: {contactInfo?.email}</p>
-                <p className="text-sm mb-2">Dirección: {contactInfo?.address}</p>
+                <p className="text-sm mb-2">Teléfono: {contactInfo.phone}</p>
+                <p className="text-sm mb-2">Email: {contactInfo.email}</p>
+                <p className="text-sm mb-2">Dirección: {contactInfo.address}</p>
                 <div className="flex space-x-4 mt-4">
-                  {contactInfo?.facebook && (
+                  {contactInfo.facebook && (
                     <a
                       href={contactInfo.facebook}
                       className="text-white hover:text-blue-500 transition-colors"
@@ -91,7 +94,7 @@ const Footer: React.FC = () => {
                       <i className="fab fa-facebook-f"></i>
                     </a>
                   )}
-                  {contactInfo?.instagram && (
+                  {contactInfo.instagram && (
                     <a
                       href={contactInfo.instagram}
                       className="text-white hover:text-pink-500 transition-colors"
@@ -99,7 +102,7 @@ const Footer: React.FC = () => {
                       <i className="fab fa-instagram"></i>
                     </a>
                   )}
-                  {contactInfo?.twitter && (
+                  {contactInfo.twitter && (
                     <a
                       href={contactInfo.twitter}
                       className="text-white hover:text-blue-400 transition-colors"
@@ -107,7 +110,7 @@ const Footer: React.FC = () => {
                       <i className="fab fa-twitter"></i>
                     </a>
                   )}
-                  {contactInfo?.tiktok && (
+                  {contactInfo.tiktok && (
                     <a
                       href={contactInfo.tiktok}
                       className="text-white hover:text-red-500 transition-colors"
@@ -121,7 +124,10 @@ const Footer: React.FC = () => {
           </div>
         </div>
         <div className="mt-8 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} Artiles Photography Studio. Todos los derechos reservados.</p>
+          <p>
+            © {new Date().getFullYear()} Artiles Photography Studio. Todos los
+            derechos reservados.
+          </p>
         </div>
       </div>
     </footer>

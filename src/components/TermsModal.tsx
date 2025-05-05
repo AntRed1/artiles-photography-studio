@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getLegalDocuments } from '../services/legalService';
 import { Legal } from '../types';
 
@@ -17,16 +17,17 @@ const TermsModal: React.FC<TermsModalProps> = ({ isOpen, onClose }) => {
       try {
         const documents = await getLegalDocuments();
         const termsDoc = documents.find(doc => doc.type === 'TERMS');
-        setTermsContent(termsDoc?.content || 'No se encontraron los términos y condiciones');
+        setTermsContent(
+          termsDoc?.content || 'No se encontraron los términos y condiciones'
+        );
         setLoading(false);
       } catch (err) {
         setError('Error al cargar los términos y condiciones');
         setLoading(false);
       }
     };
-
     if (isOpen) {
-      void fetchTermsContent();
+      fetchTermsContent();
     }
   }, [isOpen]);
 
@@ -37,16 +38,22 @@ const TermsModal: React.FC<TermsModalProps> = ({ isOpen, onClose }) => {
       <div className="bg-white p-6 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Términos y Condiciones</h2>
-          <button onClick={onClose} className="text-gray-600 hover:text-gray-800">
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-800"
+          >
             <i className="fas fa-times"></i>
           </button>
         </div>
         {loading ? (
-          <div>Cargando...</div>
+          <div className="text-center">Cargando...</div>
         ) : error ? (
-          <div>{error}</div>
+          <div className="text-center text-red-600">{error}</div>
         ) : (
-          <div className="prose" dangerouslySetInnerHTML={{ __html: termsContent }} />
+          <div
+            className="prose"
+            dangerouslySetInnerHTML={{ __html: termsContent }}
+          />
         )}
       </div>
     </div>

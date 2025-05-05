@@ -1,57 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Gallery } from '../types';
-import { getGalleryImages } from '../services/configService';
+import { getGallery } from '../services/galleryService';
 
 const Carousel: React.FC = () => {
   const [images, setImages] = useState<Gallery[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const data = await getGalleryImages();
-        setImages(data);
+        const data = await getGallery();
+        setImages(
+          data.filter((img: Gallery) =>
+            img.description.toLowerCase().includes('carousel')
+          )
+        );
         setLoading(false);
       } catch (err) {
         setError('Error al cargar las imágenes del carrusel');
         setLoading(false);
       }
     };
-
-    void fetchImages(); // Marca la promesa como ignorada
+    fetchImages();
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex(prev => (prev + 1) % images.length);
-    }, 5000);
+  if (loading) {
+    return <div className="text-center py-16">Cargando...</div>;
+  }
 
-    return () => clearInterval(interval);
-  }, [images.length]);
-
-  if (loading) return <div>Cargando...</div>;
-  if (error) return <div>{error}</div>;
-  if (!images.length) return null;
+  if (error) {
+    return <div className="text-center py-16 text-red-600">{error}</div>;
+  }
 
   return (
-    <div className="relative w-full h-96 overflow-hidden">
+    <div className="carousel w-full">
       {images.map((image, index) => (
-        <div
-          key={image.id || image.imageUrl}
-          className={`absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ${
-            index === currentIndex ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
+        <div key={image.id || index} className="carousel-item w-full">
           <img
             src={image.imageUrl}
             alt={image.description}
-            className="w-full h-full object-cover"
+            className="w-full h-96 object-cover"
           />
-          <div className="absolute bottom-0 w-full bg-black bg-opacity-50 text-white p-4">
-            <p>{image.description}</p>
-          </div>
+          <p className="text-center mt-4">{image.description}</p>
         </div>
       ))}
     </div>

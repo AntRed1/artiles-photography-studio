@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ContactInfo } from '../types';
 import { getContactInfo } from '../services/contactInfoService';
 
@@ -18,8 +18,7 @@ const Contact: React.FC = () => {
         setLoading(false);
       }
     };
-
-    void fetchContactInfo();
+    fetchContactInfo();
   }, []);
 
   return (
@@ -27,9 +26,11 @@ const Contact: React.FC = () => {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8">Contáctanos</h2>
         {loading ? (
-          <div>Cargando...</div>
-        ) : error ? (
-          <div>{error}</div>
+          <div className="text-center">Cargando...</div>
+        ) : error || !contactInfo ? (
+          <div className="text-center text-red-600">
+            {error || 'No hay información disponible'}
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
@@ -37,22 +38,22 @@ const Contact: React.FC = () => {
                 Información de Contacto
               </h3>
               <p className="mb-2">
-                <strong>Teléfono:</strong> {contactInfo?.phone}
+                <strong>Teléfono:</strong> {contactInfo.phone}
               </p>
               <p className="mb-2">
-                <strong>Email:</strong> {contactInfo?.email}
+                <strong>Email:</strong> {contactInfo.email}
               </p>
               <p className="mb-2">
-                <strong>Dirección:</strong> {contactInfo?.address}
+                <strong>Dirección:</strong> {contactInfo.address}
               </p>
               <p className="mb-2">
-                <strong>WhatsApp:</strong> {contactInfo?.whatsapp}
+                <strong>WhatsApp:</strong> {contactInfo.whatsapp}
               </p>
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-4">Redes Sociales</h3>
               <div className="flex space-x-4">
-                {contactInfo?.facebook && (
+                {contactInfo.facebook && (
                   <a
                     href={contactInfo.facebook}
                     className="text-gray-600 hover:text-blue-600 transition-colors"
@@ -60,7 +61,7 @@ const Contact: React.FC = () => {
                     <i className="fab fa-facebook-f text-lg"></i>
                   </a>
                 )}
-                {contactInfo?.instagram && (
+                {contactInfo.instagram && (
                   <a
                     href={contactInfo.instagram}
                     className="text-gray-600 hover:text-pink-600 transition-colors"
@@ -68,7 +69,7 @@ const Contact: React.FC = () => {
                     <i className="fab fa-instagram text-lg"></i>
                   </a>
                 )}
-                {contactInfo?.twitter && (
+                {contactInfo.twitter && (
                   <a
                     href={contactInfo.twitter}
                     className="text-gray-600 hover:text-blue-400 transition-colors"
@@ -76,7 +77,7 @@ const Contact: React.FC = () => {
                     <i className="fab fa-twitter text-lg"></i>
                   </a>
                 )}
-                {contactInfo?.tiktok && (
+                {contactInfo.tiktok && (
                   <a
                     href={contactInfo.tiktok}
                     className="text-gray-600 hover:text-red-600 transition-colors"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getActivePackages } from '../services/packageService';
 import { PhotographyPackage } from '../types';
 
@@ -18,40 +18,47 @@ const Packages: React.FC = () => {
         setLoading(false);
       }
     };
-    void fetchPackages();
+    fetchPackages();
   }, []);
 
-  if (loading) return <div>Cargando paquetes...</div>;
-  if (error) return <div>{error}</div>;
-  if (packages.length === 0) return <div>No hay paquetes disponibles</div>;
+  if (loading) {
+    return <div className="text-center py-16">Cargando...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-16 text-red-600">{error}</div>;
+  }
 
   return (
-    <section id="paquetes" className="py-16">
+    <section id="paquetes" className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12">
-          Nuestros Paquetes
-        </h2>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Nuestros Paquetes
+          </h2>
+          <p className="max-w-2xl mx-auto text-lg text-gray-700">
+            Elige el paquete que mejor se adapte a tus necesidades.
+          </p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {packages.map(pkg => (
             <div
               key={pkg.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
+              className="bg-gray-50 rounded-lg shadow-md p-6 text-center"
             >
               <img
                 src={pkg.imageUrl}
                 alt={pkg.title}
-                className="w-full h-48 object-cover"
+                className="w-full h-48 object-cover rounded-t-lg mb-4"
               />
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">{pkg.title}</h3>
-                <p className="text-gray-600 mb-4">{pkg.description}</p>
-                <p className="text-lg font-semibold text-red-600 mb-4">
-                  ${pkg.price}
-                </p>
-                <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
-                  Reservar Ahora
-                </button>
-              </div>
+              <h3 className="text-xl font-semibold mb-2">{pkg.title}</h3>
+              <p className="text-gray-600 mb-4">{pkg.description}</p>
+              <p className="text-lg font-bold text-red-600 mb-4">
+                RD${pkg.price.toFixed(2)}
+              </p>
+              <button className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700">
+                Reservar
+              </button>
             </div>
           ))}
         </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useScroll from '../hooks/useScroll';
 import { Configuration } from '../types';
 import { getConfiguration } from '../services/configService';
@@ -17,8 +17,7 @@ const Header: React.FC = () => {
         console.error('Error al cargar la configuración:', err);
       }
     };
-
-    void fetchConfig();
+    fetchConfig();
   }, []);
 
   return (
@@ -26,7 +25,11 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center">
           {config?.logoUrl && (
-            <img src={config.logoUrl} alt="Artiles Photography Studio" className="h-10" />
+            <img
+              src={config.logoUrl}
+              alt="Artiles Photography Studio"
+              className="h-10"
+            />
           )}
         </div>
         <nav className="hidden md:flex space-x-6">
@@ -59,7 +62,9 @@ const Header: React.FC = () => {
           className="md:hidden"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-2xl`}></i>
+          <i
+            className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-2xl`}
+          ></i>
         </button>
       </div>
       {isMenuOpen && (
