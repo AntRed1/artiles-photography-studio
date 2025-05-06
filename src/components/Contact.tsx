@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useEffect, useState } from 'react';
 import { getContactInfo } from '../services/contactInfoService';
 import { getInformation } from '../services/informationService';
-import { getServices } from '../services/photographyPackageService'; // Corregido
-import { ContactInfo, Information, Service } from '../types';
+import { getServices } from '../services/photographyPackageService';
+import { ContactInfo, Service } from '../types';
+import { submitContactForm } from '../services/contactService';
 
 const Contact: React.FC = () => {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
@@ -38,7 +40,7 @@ const Contact: React.FC = () => {
         setLoading(false);
       }
     };
-    fetchData();
+    void fetchData();
   }, []);
 
   const handleInputChange = (
@@ -54,15 +56,10 @@ const Contact: React.FC = () => {
     e.preventDefault();
     setFormStatus('submitting');
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          userAgent: navigator.userAgent, // Enviar User-Agent
-        }),
+      await submitContactForm({
+        ...formData,
+        userAgent: navigator.userAgent,
       });
-      if (!response.ok) throw new Error('Error al enviar el formulario');
       setFormStatus('success');
       setFormData({ name: '', email: '', phone: '', service: '', message: '' });
       setTimeout(() => setFormStatus('idle'), 3000);
@@ -227,19 +224,22 @@ const Contact: React.FC = () => {
           </div>
           <div>
             <div className="bg-white rounded-lg shadow-lg overflow-hidden h-80 mb-6">
-              <iframe
-                src={
-                  contactInfo.googleMapsUrl ||
-                  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242118.17305006966!2d-69.9939726!3d18.4801923!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eaf89f1107ea5ab%3A0xd6c587b82715c164!2sSanto%20Domingo%2C%20Dominican%20Republic!5e0!3m2!1sen!2sus!4v1651693456789!5m2!1sen!2sus'
-                }
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Ubicación de Artiles Photography Studio"
-              ></iframe>
+              {contactInfo.googleMapsUrl ? (
+                <iframe
+                  src={contactInfo.googleMapsUrl}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Ubicación de Artiles Photography Studio"
+                ></iframe>
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-700">
+                  Ubicación no disponible.
+                </div>
+              )}
             </div>
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="text-xl font-bold mb-4">

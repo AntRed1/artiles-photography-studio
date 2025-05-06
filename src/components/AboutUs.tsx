@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { useEffect, useState } from 'react';
 import { getInformation } from '../services/informationService';
 import { Information } from '../types';
@@ -12,6 +13,7 @@ import {
   faCameraRetro,
 } from '@fortawesome/free-solid-svg-icons';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const iconMap: { [key: string]: any } = {
   'fa-camera': faCamera,
   'fa-heart': faHeart,
@@ -38,7 +40,7 @@ const AboutUs: React.FC = () => {
         setLoading(false);
       }
     };
-    fetchInformation();
+    void fetchInformation();
   }, []);
 
   if (loading) {

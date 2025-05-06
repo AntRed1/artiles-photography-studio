@@ -12,37 +12,12 @@ import WhatsAppButton from '../components/WhatsAppButton';
 import ShareModal from '../components/ShareModal';
 import PrivacyModal from '../components/PrivacyModal';
 import TermsModal from '../components/TermsModal';
-import { saveTestimonial } from '../services/testimonialService';
-import { Testimonial } from '../types';
 
 const Home: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
-  const [name, setName] = useState('');
-
-  const handleSubmitComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const newTestimonial: Testimonial = {
-        id: 0, // El backend asignará el ID
-        name,
-        rating,
-        message: comment,
-        date: new Date().toISOString(),
-      };
-      await saveTestimonial(newTestimonial);
-      setName('');
-      setRating(0);
-      setComment('');
-      setShowShareModal(false);
-    } catch (err) {
-      console.error('Error al guardar el testimonio:', err);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -62,13 +37,6 @@ const Home: React.FC = () => {
       <ShareModal
         showShareModal={showShareModal}
         setShowShareModal={setShowShareModal}
-        name={name}
-        setName={setName}
-        rating={rating}
-        setRating={setRating}
-        comment={comment}
-        setComment={setComment}
-        handleSubmitComment={handleSubmitComment}
       />
       <PrivacyModal
         showPrivacyModal={showPrivacyModal}

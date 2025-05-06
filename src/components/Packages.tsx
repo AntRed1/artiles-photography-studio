@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getActivePackages } from '../services/packageService';
 import { getContactInfo } from '../services/contactInfoService';
-import { PhotographyPackage, ContactInfo } from '../types';
+import { PhotographyPackage } from '../types';
 
 const Packages: React.FC = () => {
   const [packages, setPackages] = useState<PhotographyPackage[]>([]);
@@ -24,7 +24,7 @@ const Packages: React.FC = () => {
         setLoading(false);
       }
     };
-    fetchData();
+    void fetchData();
   }, []);
 
   const generateWhatsAppMessage = (pkg: PhotographyPackage) => {

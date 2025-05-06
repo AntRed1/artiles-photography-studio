@@ -16,7 +16,11 @@ export interface Testimonial {
   name: string;
   rating: number;
   message: string;
-  date: string;
+  createdAt: string;
+  device: string;
+  ipAddress: string;
+  location: string;
+  enable: boolean;
 }
 
 export interface GalleryImage {
@@ -66,4 +70,13 @@ export interface Configuration {
   id: number;
   logoUrl: string;
   heroBackgroundUrl: string;
+}
+
+export interface ContactFormPayload {
+  name: string;
+  email: string;
+  phone: string;
+  service: string;
+  message: string;
+  userAgent: string;
 }

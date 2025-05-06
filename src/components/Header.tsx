@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import useScroll from '../hooks/useScroll';
 import logo from '../assets/images/logo.png'; // Verifica que este archivo exista
 
@@ -14,10 +15,14 @@ const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen }) => {
     <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center">
-          <img
+          <motion.img
             src={logo}
             alt="Artiles Photography Studio"
             className="h-12 w-auto mr-4"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.1, rotate: 3 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
             onError={e => {
               console.error('Error loading logo:', e);
               e.currentTarget.src = '/images/logo-fallback.png'; // Fallback si logo.png no se encuentra

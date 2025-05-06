@@ -30,7 +30,7 @@ const Carousel: React.FC = () => {
         setLoading(false);
       }
     };
-    fetchGallery();
+    void fetchGallery();
   }, []);
 
   useEffect(() => {
