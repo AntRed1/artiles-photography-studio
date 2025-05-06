@@ -16,3 +16,7 @@ code {
   font-family:
     source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+.rounded-button {
+  border-radius: 9999px !important;
+}

@@ -1,7 +1,7 @@
 import api from './api';
-import { Gallery } from '../types';
+import { GalleryImage } from '../types';
 
-export const getGallery = async (): Promise<Gallery[]> => {
-  const response = await api.get<Gallery[]>('/gallery');
+export const getGallery = async (): Promise<GalleryImage[]> => {
+  const response = await api.get<GalleryImage[]>('/gallery');
   return response.data;
 };

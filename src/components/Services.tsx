@@ -1,6 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { getServices } from '../services/photographyPackageService';
 import { Service } from '../types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faBook,
+  faImage,
+  faKey,
+  faPrint,
+  faFemale,
+  faCrown,
+  faGraduationCap,
+  faGem,
+  faFont,
+  faChalkboard,
+  faLeaf,
+  faFire,
+  faUmbrella,
+} from '@fortawesome/free-solid-svg-icons';
+
+const iconMap: { [key: string]: any } = {
+  'fa-book': faBook,
+  'fa-image': faImage,
+  'fa-key': faKey,
+  'fa-print': faPrint,
+  'fa-female': faFemale,
+  'fa-crown': faCrown,
+  'fa-graduation-cap': faGraduationCap,
+  'fa-gem': faGem,
+  'fa-font': faFont,
+  'fa-chalkboard': faChalkboard,
+  'fa-leaf': faLeaf,
+  'fa-fire': faFire,
+  'fa-umbrella': faUmbrella,
+};
 
 const Services: React.FC = () => {
   const [services, setServices] = useState<Service[]>([]);
@@ -22,33 +54,111 @@ const Services: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div className="text-center py-16">Cargando...</div>;
+    return <div className="text-center py-20 text-gray-600">Cargando...</div>;
   }
 
   if (error) {
-    return <div className="text-center py-16 text-red-600">{error}</div>;
+    return <div className="text-center py-20 text-red-600">{error}</div>;
   }
 
+  // Dividir servicios en adicionales y alquileres
+  const additionalServices = services.filter(service =>
+    [
+      'Álbum Digital',
+      'Enmarcados',
+      'Llaveros Personalizados',
+      'Fotos Impresas',
+    ].includes(service.title)
+  );
+  const rentals = services.filter(
+    service =>
+      ![
+        'Álbum Digital',
+        'Enmarcados',
+        'Llaveros Personalizados',
+        'Fotos Impresas',
+      ].includes(service.title)
+  );
+
   return (
-    <section id="servicios" className="py-16 md:py-24 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Nuestros Servicios
+    <section
+      id="servicios"
+      className="py-20 md:py-28 bg-gradient-to-b from-gray-50 to-gray-100"
+    >
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+            Servicios Adicionales
           </h2>
-          <p className="max-w-2xl mx-auto text-lg text-gray-700">
-            Ofrecemos una variedad de servicios fotográficos para capturar tus
-            momentos más especiales.
+          <p className="max-w-3xl mx-auto text-lg text-gray-600 leading-relaxed">
+            Complementa tu experiencia fotográfica con nuestros servicios
+            personalizados y alquileres exclusivos.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map(service => (
-            <div key={service.id} className="text-center">
-              <i className={`${service.icon} text-4xl text-red-600 mb-4`}></i>
-              <h3 className="text-lg font-semibold">{service.title}</h3>
+
+        {/* Servicios Adicionales */}
+        {additionalServices.length > 0 && (
+          <div className="mb-16">
+            <h3 className="text-2xl font-semibold text-gray-700 mb-8 text-center">
+              Servicios Personalizados
+            </h3>
+            <div
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 auto-rows-fr"
+              role="list"
+            >
+              {additionalServices.map(service => (
+                <div
+                  key={service.id}
+                  className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
+                  role="listitem"
+                >
+                  <div className="w-20 h-20 rounded-full bg-rose-50 flex items-center justify-center mb-4">
+                    <FontAwesomeIcon
+                      icon={iconMap[service.icon] || faImage}
+                      className="text-rose-600 text-3xl"
+                      aria-label={`Icono de ${service.title}`}
+                    />
+                  </div>
+                  <p className="text-sm font-medium text-gray-700 text-center line-clamp-2">
+                    {service.title}
+                  </p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        )}
+
+        {/* Alquileres */}
+        {rentals.length > 0 && (
+          <div>
+            <h3 className="text-2xl font-semibold text-gray-700 mb-8 text-center">
+              Alquileres Exclusivos
+            </h3>
+            <div
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 auto-rows-fr"
+              role="list"
+            >
+              {rentals.map(service => (
+                <div
+                  key={service.id}
+                  className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
+                  role="listitem"
+                >
+                  <div className="w-20 h-20 rounded-full bg-rose-50 flex items-center justify-center mb-4">
+                    <FontAwesomeIcon
+                      icon={iconMap[service.icon] || faImage}
+                      className="text-rose-600 text-3xl"
+                      aria-label={`Icono de ${service.title}`}
+                    />
+                  </div>
+                  <p className="text-sm font-medium text-gray-700 text-center line-clamp-2">
+                    {service.title}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

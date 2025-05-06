@@ -1,60 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { getLegalDocuments } from '../services/legalService';
-import { Legal } from '../types';
+import React from 'react';
 
 interface PrivacyModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  showPrivacyModal: boolean;
+  setShowPrivacyModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) => {
-  const [privacyContent, setPrivacyContent] = useState<string>('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPrivacyContent = async () => {
-      try {
-        const documents = await getLegalDocuments();
-        const privacyDoc = documents.find(doc => doc.type === 'PRIVACY');
-        setPrivacyContent(
-          privacyDoc?.content || 'No se encontró la política de privacidad'
-        );
-        setLoading(false);
-      } catch (err) {
-        setError('Error al cargar la política de privacidad');
-        setLoading(false);
-      }
-    };
-    if (isOpen) {
-      fetchPrivacyContent();
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
+const PrivacyModal: React.FC<PrivacyModalProps> = ({
+  showPrivacyModal,
+  setShowPrivacyModal,
+}) => {
+  if (!showPrivacyModal) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Política de Privacidad</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-600 hover:text-gray-800"
-          >
-            <i className="fas fa-times"></i>
-          </button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold">Política de Privacidad</h3>
+            <button
+              onClick={() => setShowPrivacyModal(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <i className="fa-solid fa-times text-xl"></i>
+            </button>
+          </div>
+          <div className="prose max-w-none">
+            <p>
+              En Artiles Photography Studio, nos tomamos muy en serio la
+              privacidad de nuestros clientes. Esta política describe cómo
+              recopilamos, usamos y protegemos su información personal.
+              {/* Aquí iría el contenido completo de la política de privacidad */}
+            </p>
+          </div>
         </div>
-        {loading ? (
-          <div className="text-center">Cargando...</div>
-        ) : error ? (
-          <div className="text-center text-red-600">{error}</div>
-        ) : (
-          <div
-            className="prose"
-            dangerouslySetInnerHTML={{ __html: privacyContent }}
-          />
-        )}
       </div>
     </div>
   );

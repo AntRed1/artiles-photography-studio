@@ -1,113 +1,92 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import useScroll from '../hooks/useScroll';
-import { Configuration } from '../types';
-import { getConfiguration } from '../services/configService';
+import logo from '../assets/images/logo.png'; // Verifica que este archivo exista
 
-const Header: React.FC = () => {
-  const [config, setConfig] = useState<Configuration | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { scrollToSection } = useScroll();
+interface HeaderProps {
+  isMenuOpen: boolean;
+  setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const data = await getConfiguration();
-        setConfig(data);
-      } catch (err) {
-        console.error('Error al cargar la configuración:', err);
-      }
-    };
-    fetchConfig();
-  }, []);
+const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen }) => {
+  const { activeSection, scrollToSection } = useScroll();
 
   return (
-    <header className="bg-gray-800 text-white fixed top-0 w-full z-50">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+    <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center">
-          {config?.logoUrl && (
-            <img
-              src={config.logoUrl}
-              alt="Artiles Photography Studio"
-              className="h-10"
-            />
-          )}
+          <img
+            src={logo}
+            alt="Artiles Photography Studio"
+            className="h-12 w-auto mr-4"
+            onError={e => {
+              console.error('Error loading logo:', e);
+              e.currentTarget.src = '/images/logo-fallback.png'; // Fallback si logo.png no se encuentra
+            }}
+          />
+          <h1 className="text-xl md:text-2xl font-bold flex items-center space-x-1">
+            <span className="text-black">Artiles</span>
+            <span className="text-red-600">Photography Studio</span>
+          </h1>
         </div>
-        <nav className="hidden md:flex space-x-6">
-          <button
-            onClick={() => scrollToSection('home')}
-            className="hover:text-red-500 transition-colors"
-          >
-            Inicio
-          </button>
-          <button
-            onClick={() => scrollToSection('packages')}
-            className="hover:text-red-500 transition-colors"
-          >
-            Paquetes
-          </button>
-          <button
-            onClick={() => scrollToSection('gallery')}
-            className="hover:text-red-500 transition-colors"
-          >
-            Galería
-          </button>
-          <button
-            onClick={() => scrollToSection('contact')}
-            className="hover:text-red-500 transition-colors"
-          >
-            Contacto
-          </button>
+        <nav className="hidden md:flex items-center space-x-6">
+          {[
+            'inicio',
+            'nosotros',
+            'servicios',
+            'galeria',
+            'testimonios',
+            'contacto',
+          ].map(item => (
+            <button
+              key={item}
+              onClick={() => scrollToSection(item)}
+              className={`text-sm font-medium cursor-pointer whitespace-nowrap ${
+                activeSection === item
+                  ? 'text-red-600'
+                  : 'text-gray-700 hover:text-red-600'
+              }`}
+            >
+              {item.charAt(0).toUpperCase() + item.slice(1)}
+            </button>
+          ))}
         </nav>
         <button
-          className="md:hidden"
+          className="md:hidden text-gray-700 focus:outline-none"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           <i
-            className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-2xl`}
+            className={`fa-solid ${
+              isMenuOpen ? 'fa-times' : 'fa-bars'
+            } text-2xl`}
           ></i>
         </button>
       </div>
       {isMenuOpen && (
-        <nav className="md:hidden bg-gray-700 py-4">
-          <div className="container mx-auto px-4 flex flex-col space-y-4">
-            <button
-              onClick={() => {
-                scrollToSection('home');
-                setIsMenuOpen(false);
-              }}
-              className="hover:text-red-500 transition-colors"
-            >
-              Inicio
-            </button>
-            <button
-              onClick={() => {
-                scrollToSection('packages');
-                setIsMenuOpen(false);
-              }}
-              className="hover:text-red-500 transition-colors"
-            >
-              Paquetes
-            </button>
-            <button
-              onClick={() => {
-                scrollToSection('gallery');
-                setIsMenuOpen(false);
-              }}
-              className="hover:text-red-500 transition-colors"
-            >
-              Galería
-            </button>
-            <button
-              onClick={() => {
-                scrollToSection('contact');
-                setIsMenuOpen(false);
-              }}
-              className="hover:text-red-500 transition-colors"
-            >
-              Contacto
-            </button>
+        <div className="md:hidden bg-white border-t border-gray-200 py-2">
+          <div className="container mx-auto px-4">
+            {[
+              'inicio',
+              'nosotros',
+              'servicios',
+              'galeria',
+              'testimonios',
+              'contacto',
+            ].map(item => (
+              <button
+                key={item}
+                onClick={() => {
+                  scrollToSection(item);
+                  setIsMenuOpen(false);
+                }}
+                className={`block w-full text-left py-2 px-4 cursor-pointer ${
+                  activeSection === item ? 'text-red-600' : 'text-gray-700'
+                }`}
+              >
+                {item.charAt(0).toUpperCase() + item.slice(1)}
+              </button>
+            ))}
           </div>
-        </nav>
+        </div>
       )}
     </header>
   );

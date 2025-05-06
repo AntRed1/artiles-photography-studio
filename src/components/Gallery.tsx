@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { getGallery } from '../services/galleryService';
-import { Gallery } from '../types';
+import { GalleryImage } from '../types';
 
-const GallerySection: React.FC = () => {
-  const [galleryImages, setGalleryImages] = useState<Gallery[]>([]);
-  const [carouselImages, setCarouselImages] = useState<Gallery[]>([]);
+const Gallery: React.FC = () => {
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,16 +11,14 @@ const GallerySection: React.FC = () => {
     const fetchGallery = async () => {
       try {
         const data = await getGallery();
-        setCarouselImages(
-          data
-            .filter(img => img.description.toLowerCase().includes('carousel'))
-            .slice(0, 3)
-        );
-        setGalleryImages(
-          data.filter(
-            img => !img.description.toLowerCase().includes('carousel')
-          )
-        );
+        const galleryData = data
+          .filter(img => !img.description.toLowerCase().includes('carousel'))
+          .map(img => ({
+            id: img.id,
+            imageUrl: img.imageUrl,
+            description: img.description,
+          }));
+        setGalleryImages(galleryData);
         setLoading(false);
       } catch (err) {
         setError('Error al cargar la galería');
@@ -43,38 +40,30 @@ const GallerySection: React.FC = () => {
     <section id="galeria" className="py-16 md:py-24 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Galería</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Nuestra Galería
+          </h2>
           <p className="max-w-2xl mx-auto text-lg text-gray-700">
-            Explora algunos de nuestros trabajos más recientes.
+            Explora nuestro trabajo y descubre cómo capturamos momentos
+            inolvidables.
           </p>
         </div>
-        {/* Carrusel */}
-        <div className="mb-12">
-          <div className="carousel w-full">
-            {carouselImages.map(image => (
-              <div key={image.id} className="carousel-item w-full">
-                <img
-                  src={image.imageUrl}
-                  alt={image.description}
-                  className="w-full h-96 object-cover"
-                />
-                <p className="text-center mt-4">
-                  {image.description.replace('carousel: ', '')}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Galería */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {galleryImages.map(image => (
-            <div key={image.id} className="bg-white rounded-lg shadow-md">
+            <div
+              key={image.id}
+              className="relative overflow-hidden rounded-lg group"
+            >
               <img
                 src={image.imageUrl}
-                alt={image.description}
-                className="w-full h-48 object-cover rounded-t-lg"
+                alt={`Fotografía de ${image.description}`}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
-              <p className="p-4 text-center">{image.description}</p>
+              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-300 flex items-center justify-center">
+                <p className="text-white font-medium text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 capitalize">
+                  {image.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
@@ -83,4 +72,4 @@ const GallerySection: React.FC = () => {
   );
 };
 
-export default GallerySection;
+export default Gallery;
