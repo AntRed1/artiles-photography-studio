@@ -1,8 +1,9 @@
 export interface CarouselImage {
   id: number;
-  imageUrl: string;
+  url: string;
   title: string;
   description: string;
+  displayOrder: number;
 }
 
 export interface Service {
