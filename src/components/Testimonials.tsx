@@ -23,7 +23,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ setShowShareModal }) => {
         setLoading(false);
       }
     };
-    fetchTestimonials();
+    void fetchTestimonials();
   }, []);
 
   if (loading) {
@@ -31,11 +31,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ setShowShareModal }) => {
   }
 
   if (error || testimonials.length === 0) {
-    return (
-      <div className="text-center py-20 text-red-600">
-        {error || 'No se encontraron testimonios'}
-      </div>
-    );
+    return <div className="text-center py-20 text-red-600">{error}</div>;
   }
 
   return (
@@ -81,7 +77,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ setShowShareModal }) => {
                       ))}
                     </div>
                     <p className="text-gray-700 mb-4 italic text-center line-clamp-4">
-                      "{testimonial.message}"
+                      &quot;{testimonial.message}&quot;
                     </p>
                     <div className="flex justify-between items-center">
                       <p className="font-medium text-gray-800">
