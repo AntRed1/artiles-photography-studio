@@ -50,11 +50,7 @@ const Carousel: React.FC = () => {
   }
 
   if (error || carouselImages.length === 0) {
-    return (
-      <div className="text-center py-16 text-red-600">
-        {error || 'No se encontraron imágenes en el carrusel'}
-      </div>
-    );
+    return <div className="text-center py-16 text-red-600">{error}</div>;
   }
 
   return (
