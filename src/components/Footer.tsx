@@ -218,7 +218,7 @@ const Footer: React.FC<FooterProps> = ({
                   <i className="fab fa-github text-xl"></i>
                 </a>
                 <a
-                  href="https://www.linkedin.com/in/anthony-j-rojas-v-29b26a207/"
+                  href="https://www.linkedin.com/in/anthonyrojasv/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-white transition-colors"

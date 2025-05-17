@@ -70,7 +70,11 @@ export interface Legal {
 export interface Configuration {
   id: number;
   logoUrl: string;
-  heroBackgroundUrl: string;
+  logoAltText?: string;
+  heroBackgroundImage?: string;
+  availabilityMessage?: string;
+  responseTime?: string;
+  notificationsEnabled?: boolean;
 }
 
 export interface ContactFormPayload {
