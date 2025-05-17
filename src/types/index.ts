@@ -33,10 +33,11 @@ export interface GalleryImage {
 export interface PhotographyPackage {
   id: number;
   title: string;
-  imageUrl: string;
   description: string;
   price: number;
+  imageUrl: string;
   isActive: boolean;
+  showPrice: boolean;
   features: string[];
 }
 

@@ -31,6 +31,7 @@ const Packages: React.FC = () => {
     const message =
       `Hola, estoy interesado/a en el ${pkg.title}\n` +
       `Descripción: ${pkg.description}\n` +
+      (pkg.showPrice ? `Precio: $${pkg.price.toFixed(2)}\n` : '') +
       `Características:\n${pkg.features.map(f => `• ${f}`).join('\n')}\n` +
       `Imagen: ${pkg.imageUrl}`;
     return encodeURIComponent(message);
@@ -59,7 +60,8 @@ const Packages: React.FC = () => {
             Paquetes Fotográficos
           </h2>
           <p className="max-w-3xl mx-auto text-lg sm:text-xl text-gray-600 animate-fade-in-delay">
-            Selecciona el paquete que mejor se adapte a tus necesidades y captura tus momentos especiales con nosotros.
+            Selecciona el paquete que mejor se adapte a tus necesidades y
+            captura tus momentos especiales con nosotros.
           </p>
         </div>
         <div
@@ -89,6 +91,16 @@ const Packages: React.FC = () => {
                 <p className="text-gray-600 text-center mb-4 line-clamp-2">
                   {pkg.description}
                 </p>
+                <p className="text-center mb-4">
+                  {pkg.showPrice ? (
+                    <span className="text-lg font-bold text-rose-600">
+                      ${pkg.price.toFixed(2)}
+                    </span>
+                  ) : (
+                    <span className="text-sm text-gray-600">
+                    </span>
+                  )}
+                </p>
                 <ul className="space-y-2 mb-6">
                   {pkg.features.map((feature, idx) => (
                     <li key={idx} className="flex items-center">
@@ -106,7 +118,9 @@ const Packages: React.FC = () => {
                           d="M5 13l4 4L19 7"
                         />
                       </svg>
-                      <span className="text-gray-700 text-sm sm:text-base">{feature}</span>
+                      <span className="text-gray-700 text-sm sm:text-base">
+                        {feature}
+                      </span>
                     </li>
                   ))}
                 </ul>
