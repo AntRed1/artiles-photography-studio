@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getLegalDocuments } from '../services/legalService';
 
 interface PrivacyModalProps {
   showPrivacyModal: boolean;
@@ -9,6 +10,32 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({
   showPrivacyModal,
   setShowPrivacyModal,
 }) => {
+  const [privacyContent, setPrivacyContent] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPrivacyPolicy = async () => {
+      try {
+        const documents = await getLegalDocuments();
+        const privacyDoc = documents.find(doc => doc.type === 'PRIVACY');
+        if (privacyDoc) {
+          setPrivacyContent(privacyDoc.content);
+        } else {
+          setError('No se encontró la política de privacidad.');
+        }
+      } catch (err) {
+        setError('Error al cargar la política de privacidad.');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (showPrivacyModal) {
+      void fetchPrivacyPolicy();
+    }
+  }, [showPrivacyModal]);
+
   if (!showPrivacyModal) return null;
 
   return (
@@ -25,12 +52,11 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({
             </button>
           </div>
           <div className="prose max-w-none">
-            <p>
-              En Artiles Photography Studio, nos tomamos muy en serio la
-              privacidad de nuestros clientes. Esta política describe cómo
-              recopilamos, usamos y protegemos su información personal.
-              {/* Aquí iría el contenido completo de la política de privacidad */}
-            </p>
+            {isLoading && <p>Cargando...</p>}
+            {error && <p className="text-red-500">{error}</p>}
+            {!isLoading && !error && privacyContent && (
+              <div dangerouslySetInnerHTML={{ __html: privacyContent }} />
+            )}
           </div>
         </div>
       </div>

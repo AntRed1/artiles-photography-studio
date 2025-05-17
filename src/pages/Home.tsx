@@ -12,32 +12,12 @@ import WhatsAppButton from '../components/WhatsAppButton';
 import ShareModal from '../components/ShareModal';
 import PrivacyModal from '../components/PrivacyModal';
 import TermsModal from '../components/TermsModal';
-import { testimonials } from '../data/testimonials';
 
 const Home: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
-  const [name, setName] = useState('');
-
-  const handleSubmitComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newTestimonial = {
-      id: testimonials.length + 1,
-      name,
-      rating,
-      comment,
-      date: new Date().toLocaleDateString(),
-    };
-    testimonials.push(newTestimonial);
-    setName('');
-    setRating(0);
-    setComment('');
-    setShowShareModal(false);
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -57,13 +37,6 @@ const Home: React.FC = () => {
       <ShareModal
         showShareModal={showShareModal}
         setShowShareModal={setShowShareModal}
-        name={name}
-        setName={setName}
-        rating={rating}
-        setRating={setRating}
-        comment={comment}
-        setComment={setComment}
-        handleSubmitComment={handleSubmitComment}
       />
       <PrivacyModal
         showPrivacyModal={showPrivacyModal}

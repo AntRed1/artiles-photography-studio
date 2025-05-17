@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.artilesphotographystudio.com/</loc>
-    <lastmod>2025-05-04</lastmod>
+    <loc>https://artilesphotography.com/</loc>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.artilesphotographystudio.com/#nosotros</loc>
-    <lastmod>2025-05-04</lastmod>
+    <loc>https://artilesphotography.com/#nosotros</loc>
+    <lastmod>2025-05-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <!-- Añade más URLs para otras secciones -->
+  <url>
+    <loc>https://artilesphotography.com/#testimonios</loc>
+    <lastmod>2025-05-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://artilesphotography.com/#galeria</loc>
+    <lastmod>2025-05-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://artilesphotography.com/#servicios</loc>
+    <lastmod>2025-05-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://artilesphotography.com/#contacto</loc>
+    <lastmod>2025-05-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

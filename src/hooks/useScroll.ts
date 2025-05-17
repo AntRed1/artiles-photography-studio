@@ -1,38 +1,42 @@
 import { useEffect, useState } from 'react';
 
-export const useScroll = () => {
+const useScroll = () => {
   const [activeSection, setActiveSection] = useState('inicio');
 
-  const handleScroll = () => {
-    const sections = document.querySelectorAll('section');
-    let currentActiveSection = 'inicio';
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (
-        window.scrollY >= sectionTop - 200 &&
-        window.scrollY < sectionTop + sectionHeight - 200
-      ) {
-        currentActiveSection = section.id;
-      }
-    });
-    setActiveSection(currentActiveSection);
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const yOffset = -80; // Ajuste para el encabezado fijo
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const sections = document.querySelectorAll<HTMLElement>('section[id]');
+      let currentActiveSection = 'inicio';
+      sections.forEach(section => {
+        const sectionTop =
+          section.getBoundingClientRect().top + window.pageYOffset - 80;
+        const sectionHeight = section.offsetHeight;
+        if (
+          scrollPosition >= sectionTop &&
+          scrollPosition < sectionTop + sectionHeight
+        ) {
+          currentActiveSection = section.id;
+        }
+      });
+      setActiveSection(currentActiveSection);
+    };
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      window.scrollTo({
-        top: section.offsetTop - 80,
-        behavior: 'smooth',
-      });
-    }
-  };
-
   return { activeSection, setActiveSection, scrollToSection };
 };
+
+export default useScroll;

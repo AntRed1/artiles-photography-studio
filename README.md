@@ -8,6 +8,7 @@ A professional photography studio website built with React, TypeScript, and Tail
    ```bash
    npm install
 
+```bash
    Estudio-Fotografico-Artiles/
 ├── public/
 │   ├── index.html
@@ -51,3 +52,4 @@ A professional photography studio website built with React, TypeScript, and Tail
 ├── tsconfig.json
 ├── package.json
 └── README.md
+```
