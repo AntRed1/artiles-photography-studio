@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getLegalDocuments } from '../services/legalService';
 
 interface TermsModalProps {
   showTermsModal: boolean;
@@ -9,6 +10,32 @@ const TermsModal: React.FC<TermsModalProps> = ({
   showTermsModal,
   setShowTermsModal,
 }) => {
+  const [termsContent, setTermsContent] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTerms = async () => {
+      try {
+        const documents = await getLegalDocuments();
+        const termsDoc = documents.find(doc => doc.type === 'TERMS');
+        if (termsDoc) {
+          setTermsContent(termsDoc.content);
+        } else {
+          setError('No se encontraron los términos y condiciones.');
+        }
+      } catch (err) {
+        setError('Error al cargar los términos y condiciones.');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (showTermsModal) {
+      void fetchTerms();
+    }
+  }, [showTermsModal]);
+
   if (!showTermsModal) return null;
 
   return (
@@ -25,12 +52,11 @@ const TermsModal: React.FC<TermsModalProps> = ({
             </button>
           </div>
           <div className="prose max-w-none">
-            <p>
-              Al utilizar nuestros servicios, usted acepta los siguientes
-              términos y condiciones que rigen el uso de nuestros servicios
-              fotográficos.
-              {/* Aquí iría el contenido completo de los términos y condiciones */}
-            </p>
+            {isLoading && <p>Cargando...</p>}
+            {error && <p className="text-red-500">{error}</p>}
+            {!isLoading && !error && termsContent && (
+              <div dangerouslySetInnerHTML={{ __html: termsContent }} />
+            )}
           </div>
         </div>
       </div>
