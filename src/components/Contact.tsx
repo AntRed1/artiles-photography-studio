@@ -1,12 +1,29 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faSpinner,
+  faCheckCircle,
+  faExclamationCircle,
+  faChevronDown,
+  faLocationDot,
+  faPhone,
+  faEnvelope,
+  faClock,
+} from '@fortawesome/free-solid-svg-icons';
+import { motion, AnimatePresence } from 'framer-motion';
+
 import { getContactInfo } from '../services/contactInfoService';
 import { getInformation } from '../services/informationService';
 import { getServices } from '../services/photographyPackageService';
-import { ContactInfo, Service } from '../types';
 import { submitContactForm } from '../services/contactService';
+import { ContactInfo, Service } from '../types';
 
-const Contact: React.FC = () => {
+interface ContactProps {
+  onSubmit?: () => void;
+}
+
+const Contact: React.FC<ContactProps> = ({ onSubmit }) => {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -22,6 +39,7 @@ const Contact: React.FC = () => {
   const [formStatus, setFormStatus] = useState<
     'idle' | 'submitting' | 'success' | 'error'
   >('idle');
+  const statusRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,7 +54,7 @@ const Contact: React.FC = () => {
         setServices(servicesData);
         setLoading(false);
       } catch (err) {
-        setError('Error al cargar los datos');
+        setError('Error al cargar los datos. Por favor, intenta de nuevo.');
         setLoading(false);
       }
     };
@@ -62,21 +80,35 @@ const Contact: React.FC = () => {
       });
       setFormStatus('success');
       setFormData({ name: '', email: '', phone: '', service: '', message: '' });
-      setTimeout(() => setFormStatus('idle'), 3000);
+      if (onSubmit) onSubmit();
     } catch (err) {
       setFormStatus('error');
-      setTimeout(() => setFormStatus('idle'), 3000);
+    } finally {
+      statusRef.current?.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => setFormStatus('idle'), 5000);
     }
   };
 
   if (loading) {
-    return <div className="text-center py-16">Cargando...</div>;
+    return (
+      <div className="text-center py-16">
+        <FontAwesomeIcon
+          icon={faSpinner}
+          className="text-rose-600 text-3xl animate-spin"
+        />
+        <p className="mt-4 text-gray-700">Cargando...</p>
+      </div>
+    );
   }
 
   if (error || !contactInfo) {
     return (
-      <div className="text-center py-16 text-red-600">
-        {error || 'No se pudo cargar la información'}
+      <div className="text-center py-16 text-rose-600">
+        <FontAwesomeIcon icon={faExclamationCircle} className="text-3xl mb-4" />
+        <p>
+          {error ||
+            'No se pudo cargar la información. Por favor, intenta de nuevo.'}
+        </p>
       </div>
     );
   }
@@ -85,14 +117,16 @@ const Contact: React.FC = () => {
     <section id="contacto" className="py-16 md:py-24 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Contáctanos</h2>
-          <p className="max-w-2xl mx-auto text-lg text-gray-700">
-            Estamos aquí para responder tus preguntas y ayudarte a planificar tu
-            sesión fotográfica.
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
+            Contáctanos
+          </h2>
+          <p className="max-w-2xl mx-auto text-lg text-gray-600">
+            Estamos listos para ayudarte a capturar tus momentos más especiales.
+            ¡Déjanos un mensaje y te responderemos pronto!
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-white rounded-lg shadow-lg p-8">
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
@@ -106,8 +140,8 @@ const Contact: React.FC = () => {
                   id="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
-                  placeholder="Tu nombre"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                  placeholder="Tu nombre completo"
                   required
                 />
               </div>
@@ -123,7 +157,7 @@ const Contact: React.FC = () => {
                   id="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-rose-500 focus:border-rose-500 transition-colors"
                   placeholder="tu@email.com"
                   required
                 />
@@ -140,7 +174,7 @@ const Contact: React.FC = () => {
                   id="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-rose-500 focus:border-rose-500 transition-colors"
                   placeholder="(809) 123-4567"
                 />
               </div>
@@ -156,7 +190,7 @@ const Contact: React.FC = () => {
                     id="service"
                     value={formData.service}
                     onChange={handleInputChange}
-                    className="appearance-none w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 bg-white"
+                    className="appearance-none w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-rose-500 focus:border-rose-500 bg-white transition-colors"
                     required
                   >
                     <option value="">Selecciona un servicio</option>
@@ -177,8 +211,11 @@ const Contact: React.FC = () => {
                       </option>
                     ))}
                   </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <i className="fa-solid fa-chevron-down text-gray-400"></i>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                    <FontAwesomeIcon
+                      icon={faChevronDown}
+                      className="text-gray-400"
+                    />
                   </div>
                 </div>
               </div>
@@ -194,34 +231,72 @@ const Contact: React.FC = () => {
                   rows={4}
                   value={formData.message}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
-                  placeholder="Cuéntanos sobre tu proyecto..."
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-rose-500 focus:border-rose-500 transition-colors"
+                  placeholder="Cuéntanos sobre tu proyecto o evento..."
                   required
                 ></textarea>
               </div>
               <button
                 type="submit"
                 disabled={formStatus === 'submitting'}
-                className={`w-full px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors duration-300 !rounded-button whitespace-nowrap ${
-                  formStatus === 'submitting'
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'cursor-pointer'
-                }`}
+                className="w-full px-6 py-3 bg-rose-600 text-white font-medium rounded-lg hover:bg-rose-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                {formStatus === 'submitting' ? 'Enviando...' : 'Enviar Mensaje'}
+                {formStatus === 'submitting' ? (
+                  <>
+                    <FontAwesomeIcon
+                      icon={faSpinner}
+                      className="animate-spin mr-2"
+                    />
+                    Enviando...
+                  </>
+                ) : (
+                  'Enviar Mensaje'
+                )}
               </button>
-              {formStatus === 'success' && (
-                <p className="text-green-600 text-center">
-                  ¡Mensaje enviado con éxito!
-                </p>
-              )}
-              {formStatus === 'error' && (
-                <p className="text-red-600 text-center">
-                  Error al enviar el mensaje. Inténtalo de nuevo.
-                </p>
-              )}
+
+              {/* MENSAJE DE ESTADO CON ANIMACIÓN */}
+              <div ref={statusRef}>
+                <AnimatePresence>
+                  {formStatus === 'success' && (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="flex items-center bg-green-100 text-green-800 rounded-lg p-4 mt-4 shadow-sm"
+                    >
+                      <FontAwesomeIcon
+                        icon={faCheckCircle}
+                        className="mr-3 text-xl"
+                      />
+                      <p className="text-sm font-medium">
+                        ¡Mensaje enviado con éxito! Te contactaremos pronto.
+                      </p>
+                    </motion.div>
+                  )}
+                  {formStatus === 'error' && (
+                    <motion.div
+                      key="error"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="flex items-center bg-rose-100 text-rose-800 rounded-lg p-4 mt-4 shadow-sm"
+                    >
+                      <FontAwesomeIcon
+                        icon={faExclamationCircle}
+                        className="mr-3 text-xl"
+                      />
+                      <p className="text-sm font-medium">
+                        Error al enviar el mensaje. Por favor, intenta de nuevo.
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </form>
           </div>
+
+          {/* INFO DE CONTACTO */}
           <div>
             <div className="bg-white rounded-lg shadow-lg overflow-hidden h-80 mb-6">
               {contactInfo.googleMapsUrl ? (
@@ -241,49 +316,45 @@ const Contact: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-bold mb-4">
+            <div className="bg-white rounded-lg shadow-lg p-8">
+              <h3 className="text-xl font-bold mb-4 text-gray-800">
                 Información de Contacto
               </h3>
               <div className="space-y-4">
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 mt-1">
-                    <i className="fa-solid fa-location-dot text-red-600 w-5 text-center"></i>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-gray-700">{contactInfo.address}</p>
-                  </div>
+                  <FontAwesomeIcon
+                    icon={faLocationDot}
+                    className="text-rose-600 w-5 mt-1"
+                  />
+                  <p className="ml-3 text-gray-700">{contactInfo.address}</p>
                 </div>
                 <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <i className="fa-solid fa-phone text-red-600 w-5 text-center"></i>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-gray-700">{contactInfo.phone}</p>
-                  </div>
+                  <FontAwesomeIcon
+                    icon={faPhone}
+                    className="text-rose-600 w-5"
+                  />
+                  <p className="ml-3 text-gray-700">{contactInfo.phone}</p>
                 </div>
                 <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <i className="fa-solid fa-envelope text-red-600 w-5 text-center"></i>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-gray-700">{contactInfo.email}</p>
-                  </div>
+                  <FontAwesomeIcon
+                    icon={faEnvelope}
+                    className="text-rose-600 w-5"
+                  />
+                  <p className="ml-3 text-gray-700">{contactInfo.email}</p>
                 </div>
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 mt-1">
-                    <i className="fa-solid fa-clock text-red-600 w-5 text-center"></i>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-gray-700 font-medium">
+                  <FontAwesomeIcon
+                    icon={faClock}
+                    className="text-rose-600 w-5 mt-1"
+                  />
+                  <div className="ml-3 text-gray-700">
+                    <p className="font-medium">
                       Horario flexible - Con cita previa
                     </p>
-                    <p className="text-gray-700 mt-1">
+                    <p className="mt-1">
                       Disponibilidad adaptada a tus necesidades.
                     </p>
-                    <p className="text-gray-700 mt-1">
-                      Contáctanos para agendar tu sesión.
-                    </p>
+                    <p className="mt-1">Contáctanos para agendar tu sesión.</p>
                   </div>
                 </div>
               </div>

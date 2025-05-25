@@ -4,9 +4,12 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { getContactInfo } from '../services/contactInfoService';
 import { ContactInfo } from '../types';
-import { trackEvent } from '../utils/analytics';
 
-const WhatsAppButton: React.FC = () => {
+interface WhatsAppButtonProps {
+  onClick?: () => void; // Prop opcional para rastrear clics
+}
+
+const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ onClick }) => {
   const [showWhatsappTooltip, setShowWhatsappTooltip] = useState(false);
   const [whatsappNumber, setWhatsappNumber] = useState<string>('1234567890'); // Fallback estático
   const [loading, setLoading] = useState(true);
@@ -14,7 +17,7 @@ const WhatsAppButton: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    void (async () => {
+    const fetchData = async () => {
       try {
         const data: ContactInfo = await getContactInfo();
         setWhatsappNumber(data.whatsapp);
@@ -23,13 +26,16 @@ const WhatsAppButton: React.FC = () => {
         setError('Error al cargar el número de WhatsApp');
         setLoading(false);
       }
-    })();
+    };
+    void fetchData();
   }, []);
 
   const whatsappLink = `https://wa.me/${whatsappNumber}`;
 
   const handleClick = () => {
-    trackEvent('Button', 'Click', 'WhatsApp Contact');
+    if (onClick) {
+      onClick(); // Ejecutar la prop onClick para rastrear el evento
+    }
   };
 
   const handleClose = () => {
