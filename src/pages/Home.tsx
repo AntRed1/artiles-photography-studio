@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { debounce } from 'lodash';
+import React, { useState, useRef } from 'react';
 import Header from '../components/Header';
 import Carousel from '../components/Carousel';
 import AboutUs from '../components/AboutUs';
@@ -15,21 +13,17 @@ import ShareModal from '../components/ShareModal';
 import PrivacyModal from '../components/PrivacyModal';
 import TermsModal from '../components/TermsModal';
 
-interface TrackEventProps {
-  name: string;
-  props?: Record<string, string>;
-}
-
+// Componente principal de la página de inicio
 const Home: React.FC = () => {
+  // Estado para controlar el menú y los modales
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const trackedSections = useRef<Set<string>>(new Set());
   const toastTimeout = useRef<number | null>(null);
 
-  // Referencias para las secciones
+  // Referencias para las secciones (mantenidas para posibles funcionalidades futuras como desplazamiento suave)
   const sectionRefs = {
     carousel: useRef<HTMLDivElement>(null),
     aboutUs: useRef<HTMLDivElement>(null),
@@ -40,42 +34,8 @@ const Home: React.FC = () => {
     contact: useRef<HTMLDivElement>(null),
   };
 
-  // Función para rastrear eventos personalizados a través del backend
-  const trackEvent = async ({ name, props }: TrackEventProps) => {
-    try {
-      const response = await fetch('/api/analytics/track-event', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          url: window.location.href,
-          userAgent: navigator.userAgent,
-          ipAddress: 'unknown',
-          props: props || {},
-        }),
-      });
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-      console.log(`Evento enviado: ${name}`, props);
-    } catch (error) {
-      console.error('Error al enviar evento:', error);
-      setError('No se pudo registrar la acción. Intenta de nuevo.');
-    }
-  };
-
-  // Función de rastreo con debounce
-  const debouncedTrackEvent = useCallback(
-    debounce((name: string, props?: Record<string, string>) => {
-      void trackEvent({ name, props });
-    }, 1000),
-    []
-  );
-
-  // Mostrar y limpiar notificaciones de error
-  useEffect(() => {
+  // Limpiar notificaciones de error después de 5 segundos
+  React.useEffect(() => {
     if (error) {
       if (toastTimeout.current) {
         clearTimeout(toastTimeout.current);
@@ -88,45 +48,6 @@ const Home: React.FC = () => {
       };
     }
   }, [error]);
-
-  // Rastrear cuando se abre el modal de compartir
-  useEffect(() => {
-    if (showShareModal) {
-      debouncedTrackEvent('OpenShareModal');
-    }
-  }, [showShareModal, debouncedTrackEvent]);
-
-  // Configurar IntersectionObserver para rastrear visibilidad de secciones
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const sectionName = entry.target.getAttribute('data-section');
-            if (sectionName && !trackedSections.current.has(sectionName)) {
-              trackedSections.current.add(sectionName);
-              debouncedTrackEvent('ViewSection', { section: sectionName });
-            }
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-
-    Object.values(sectionRefs).forEach(ref => {
-      if (ref.current) {
-        observer.observe(ref.current);
-      }
-    });
-
-    return () => {
-      Object.values(sectionRefs).forEach(ref => {
-        if (ref.current) {
-          observer.unobserve(ref.current);
-        }
-      });
-    };
-  }, [debouncedTrackEvent, sectionRefs]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -159,15 +80,13 @@ const Home: React.FC = () => {
         <Testimonials setShowShareModal={setShowShareModal} />
       </div>
       <div ref={sectionRefs.contact} data-section="Contact">
-        <Contact onSubmit={() => debouncedTrackEvent('ContactFormSubmit')} />
+        <Contact />
       </div>
       <Footer
         setShowPrivacyModal={setShowPrivacyModal}
         setShowTermsModal={setShowTermsModal}
       />
-      <WhatsAppButton
-        onClick={() => debouncedTrackEvent('WhatsAppButtonClick')}
-      />
+      <WhatsAppButton />
       <ShareModal
         showShareModal={showShareModal}
         setShowShareModal={setShowShareModal}

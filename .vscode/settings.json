@@ -27,5 +27,6 @@
     "Restaurar",
     "solicitud",
     "tiktok"
-  ]
+  ],
+  "DockerRun.DisableDockerrc": true
 }
