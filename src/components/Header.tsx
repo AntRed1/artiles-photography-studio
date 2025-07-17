@@ -66,10 +66,6 @@ const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen }) => {
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.1, rotate: 3 }}
               transition={{ duration: 0.3, ease: 'easeOut' }}
-              onError={e => {
-                console.error('Error cargando logo:', e);
-                e.currentTarget.src = fallbackLogo;
-              }}
             />
             <h1 className="text-lg sm:text-xl md:text-2xl font-extrabold flex items-center space-x-1">
               <span className="text-gray-900">Artiles</span>
