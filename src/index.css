@@ -66,3 +66,62 @@ code {
     transform: rotate(25deg);
   }
 }
+
+/* Agregar este CSS a tu archivo global de estilos */
+
+/* Estilos para contenido de markdown en los modales */
+.markdown-content {
+  @apply text-gray-700 leading-relaxed;
+}
+
+.markdown-content h1 {
+  @apply text-3xl font-bold mb-4 text-blue-600 border-b-2 border-blue-100 pb-2;
+}
+
+.markdown-content h2 {
+  @apply text-2xl font-semibold mb-3 text-gray-800 mt-6;
+}
+
+.markdown-content h3 {
+  @apply text-xl font-semibold mb-2 text-gray-700 mt-4;
+}
+
+.markdown-content p {
+  @apply mb-3 text-gray-600 leading-relaxed;
+}
+
+.markdown-content ul {
+  @apply list-disc list-inside mb-4 space-y-1 ml-4;
+}
+
+.markdown-content li {
+  @apply text-gray-600;
+}
+
+.markdown-content strong {
+  @apply font-semibold text-gray-800;
+}
+
+.markdown-content hr {
+  @apply my-6 border-gray-300;
+}
+
+.markdown-content em {
+  @apply italic text-gray-500;
+}
+
+/* Estilos para los emojis y iconos */
+.markdown-content h1:before,
+.markdown-content h2:before {
+  @apply mr-2;
+}
+
+/* Estilos para checkboxes */
+.markdown-content input[type='checkbox'] {
+  @apply mr-2 transform scale-125;
+}
+
+/* Espaciado entre secciones */
+.markdown-content > * + * {
+  @apply mt-4;
+}
