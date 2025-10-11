@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Camera } from 'lucide-react';
 import useScroll from '../hooks/useScroll';
 import { getConfiguration } from '../services/configService';
 import { Configuration } from '../types';
@@ -23,21 +24,6 @@ const headerVariants = {
     boxShadow:
       '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
     transition: { duration: 0.3 },
-  },
-};
-
-const logoVariants = {
-  hidden: { opacity: 0, scale: 0.8, rotate: -10 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    rotate: 0,
-    transition: { duration: 0.5 },
-  },
-  hover: {
-    scale: 1.05,
-    rotate: 2,
-    transition: { duration: 0.2 },
   },
 };
 
@@ -68,57 +54,78 @@ const menuItemVariants = {
   },
 };
 
-// Logo Component
+// Logo Component - MEJORADO
 interface LogoProps {
   config: Configuration | null;
   error: string | null;
 }
 
-const Logo: React.FC<LogoProps> = ({ config, error }) => (
-  <motion.div
-    className="flex items-center"
-    initial="hidden"
-    animate="visible"
-    whileHover="hover"
-  >
-    <motion.img
-      src={config?.logoUrl || '/images/logo-fallback.png'}
-      alt={config?.logoAltText || 'Artiles Photography Studio'}
-      className="h-10 sm:h-12 w-auto mr-3 sm:mr-4 object-contain"
-      variants={logoVariants}
-      onError={e => {
-        const target = e.target as HTMLImageElement;
-        target.src = '/images/logo-fallback.png';
-      }}
-    />
-    <div className="flex flex-col">
-      <motion.h1
-        className="text-lg sm:text-xl md:text-2xl font-black tracking-tight leading-none"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.4 }}
-      >
-        <span className="text-gray-900">Artiles</span>
-        <span className="text-rose-600 ml-1">Photography</span>
-        <span className="text-gray-700 block text-xs font-medium tracking-wide uppercase opacity-75 mt-0.5">
-          Studio
-        </span>
-      </motion.h1>
-      {error && (
-        <motion.span
-          className="text-rose-500 text-xs mt-1 font-medium"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          {error}
-        </motion.span>
-      )}
-    </div>
-  </motion.div>
-);
+const Logo: React.FC<LogoProps> = ({ config, error }) => {
+  const [imageError, setImageError] = useState(false);
+  const shouldShowIcon = !config?.logoUrl || imageError;
 
-// Navigation Item Component
+  return (
+    <div className="flex items-center group cursor-pointer">
+      {/* Camera Icon o Logo personalizado */}
+      <div className="relative mr-3 sm:mr-4">
+        {shouldShowIcon ? (
+          <div className="relative">
+            {/* Círculo de fondo con gradiente */}
+            <div className="absolute inset-0 bg-gradient-to-br from-rose-500 to-rose-700 rounded-2xl transform rotate-6 group-hover:rotate-12 transition-transform duration-300"></div>
+
+            {/* Cámara */}
+            <div className="relative bg-gray-900 p-2.5 sm:p-3 rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300">
+              <Camera
+                className="h-6 w-6 sm:h-7 sm:w-7 text-white"
+                strokeWidth={2.5}
+              />
+              {/* Detalle decorativo */}
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-white"></div>
+            </div>
+          </div>
+        ) : (
+          <img
+            src={config?.logoUrl}
+            alt={config?.logoAltText || 'Artiles Photography Studio'}
+            className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            onError={() => setImageError(true)}
+          />
+        )}
+      </div>
+
+      {/* Texto del logo */}
+      <div className="flex flex-col">
+        <div className="flex items-baseline flex-wrap">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-none">
+            <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              Artiles
+            </span>
+          </h1>
+          <span className="text-base sm:text-lg md:text-xl font-bold text-rose-600 ml-2 group-hover:text-rose-700 transition-colors">
+            Photography
+          </span>
+        </div>
+
+        <div className="flex items-center mt-0.5 sm:mt-1">
+          <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-gray-500 group-hover:text-gray-700 transition-colors">
+            Studio
+          </span>
+          {/* Línea decorativa */}
+          <div className="ml-2 h-px w-8 bg-gradient-to-r from-rose-500 to-transparent opacity-60"></div>
+        </div>
+
+        {error && (
+          <span className="text-rose-600 text-xs mt-1.5 font-medium flex items-center">
+            <span className="w-1 h-1 bg-rose-600 rounded-full mr-1.5"></span>
+            {error}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Navigation Item Component - CORREGIDO para responsive
 interface NavItemProps {
   item: string;
   isActive: boolean;
@@ -136,10 +143,17 @@ const NavItem: React.FC<NavItemProps> = ({
 }) => {
   const displayName = item.charAt(0).toUpperCase() + item.slice(1);
 
+  // Handler que asegura el scroll en móvil
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onClick();
+  };
+
   if (isMobile) {
     return (
       <motion.button
-        onClick={onClick}
+        onClick={handleClick}
         className="block w-full text-left py-4 px-6 text-base font-semibold transition-all duration-300 group relative overflow-hidden"
         variants={menuItemVariants}
         custom={index}
@@ -182,7 +196,7 @@ const NavItem: React.FC<NavItemProps> = ({
 
   return (
     <motion.button
-      onClick={onClick}
+      onClick={handleClick}
       className="relative px-4 py-2 text-sm font-semibold transition-all duration-300 group"
       whileHover={{ y: -1 }}
       whileTap={{ scale: 0.95 }}
@@ -297,9 +311,20 @@ const Header: React.FC<HeaderProps> = ({ isMenuOpen, setIsMenuOpen }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Handler mejorado que cierra el menú y hace scroll
   const handleNavClick = (item: string) => {
-    scrollToSection(item);
-    setIsMenuOpen(false);
+    // Primero cerramos el menú si está abierto
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+
+    // Pequeño delay para permitir que el menú se cierre antes del scroll
+    setTimeout(
+      () => {
+        scrollToSection(item);
+      },
+      isMenuOpen ? 300 : 0
+    ); // 300ms coincide con la animación del menú
   };
 
   return (

@@ -13,6 +13,13 @@ interface FooterProps {
   setShowTermsModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface VersionInfo {
+  version: string;
+  buildDate: string;
+  buildTimestamp: number;
+  environment: string;
+}
+
 // Definir variantes con tipos explícitos
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -32,7 +39,7 @@ const itemVariants: Variants = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.4, 0.0, 0.2, 1] as [number, number, number, number], // Curva de Bezier explícita
+      ease: [0.4, 0.0, 0.2, 1] as [number, number, number, number],
     },
   },
 };
@@ -44,6 +51,7 @@ const Footer: React.FC<FooterProps> = ({
   const { scrollToSection } = useScroll();
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
   const [information, setInformation] = useState<Information | null>(null);
+  const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,6 +73,30 @@ const Footer: React.FC<FooterProps> = ({
     };
     void fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const response = await fetch('/version.json');
+        const data: VersionInfo = await response.json();
+        setVersionInfo(data);
+      } catch (err) {
+        console.error('Error loading version info:', err);
+      }
+    };
+    void fetchVersion();
+  }, []);
+
+  const formatBuildDate = (isoDate: string) => {
+    const date = new Date(isoDate);
+    return date.toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
@@ -426,9 +458,6 @@ const Footer: React.FC<FooterProps> = ({
 
               {/* Additional Services on larger screens */}
               <motion.div variants={itemVariants} className="hidden xl:block">
-                <h4 className="text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4">
-                  Más Servicios
-                </h4>
                 <ul className="space-y-1.5 sm:space-y-2">
                   {information?.specialties
                     .slice(6, 10)
@@ -475,7 +504,7 @@ const Footer: React.FC<FooterProps> = ({
             className="border-t border-gray-700/50 pt-4 sm:pt-6"
           >
             <div className="flex flex-col space-y-3 sm:space-y-4 md:space-y-0 md:flex-row md:justify-between md:items-center">
-              {/* Copyright */}
+              {/* Copyright and Version */}
               <div className="text-center md:text-left">
                 <p className="text-gray-400 text-xs sm:text-sm">
                   © 2025{' '}
@@ -484,6 +513,33 @@ const Footer: React.FC<FooterProps> = ({
                   </span>
                   . Todos los derechos reservados.
                 </p>
+                {versionInfo && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.3 }}
+                    className="text-gray-500 text-xs mt-1 flex items-center justify-center md:justify-start gap-2 flex-wrap"
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      <i className="fas fa-code-branch text-rose-400 text-[10px]"></i>
+                      <span className="font-mono">v{versionInfo.version}</span>
+                    </span>
+                    <span className="text-gray-600">•</span>
+                    <span className="inline-flex items-center gap-1">
+                      <i className="far fa-calendar text-rose-400 text-[10px]"></i>
+                      <span>{formatBuildDate(versionInfo.buildDate)}</span>
+                    </span>
+                    {versionInfo.environment === 'development' && (
+                      <>
+                        <span className="text-gray-600">•</span>
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-yellow-500/10 border border-yellow-500/20 rounded text-yellow-400">
+                          <i className="fas fa-code text-[8px]"></i>
+                          <span className="text-[10px] font-medium">DEV</span>
+                        </span>
+                      </>
+                    )}
+                  </motion.p>
+                )}
               </div>
 
               {/* Developer Info */}
@@ -514,6 +570,17 @@ const Footer: React.FC<FooterProps> = ({
                     whileTap={{ scale: 0.95 }}
                   >
                     <i className="fab fa-linkedin text-sm sm:text-base lg:text-lg text-gray-400 group-hover:text-white transition-colors"></i>
+                  </motion.a>
+
+                  <motion.a
+                    href="https://antred1.github.io/Portafolio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-800 hover:bg-gradient-to-r hover:from-rose-600 hover:to-pink-600 rounded-full flex items-center justify-center transition-all duration-300 group"
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <i className="fas fa-globe text-sm sm:text-base lg:text-lg text-gray-400 group-hover:text-white transition-colors"></i>
                   </motion.a>
                 </div>
               </div>

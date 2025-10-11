@@ -43,13 +43,19 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "build": "cross-env NODE_ENV=production node scripts/update-version.js && react-scripts build",
+    "prestart": "node scripts/update-version.js",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "prebuild": "node scripts/update-version.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.{ts,tsx}",
     "lint:fix": "eslint src/**/*.{ts,tsx} --fix",
-    "format": "prettier --write src/**/*.{ts,tsx,css,md}"
+    "format": "prettier --write src/**/*.{ts,tsx,css,md}",
+    "version:update": "node scripts/update-version.js",
+    "version:patch": "npm version patch && npm run version:update",
+    "version:minor": "npm version minor && npm run version:update",
+    "version:major": "npm version major && npm run version:update"
   },
   "eslintConfig": {
     "extends": [

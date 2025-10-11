@@ -139,6 +139,8 @@ npm run dev
 yarn dev
 # o
 pnpm dev
+
+
 ```
 
 🎉 **¡Listo!** Abre [http://localhost:5173](http://localhost:5173) en tu navegador
@@ -160,6 +162,28 @@ npm run type-check   # Verificar tipos de TypeScript
 npm run test         # Ejecutar tests
 npm run test:watch   # Tests en modo watch
 npm run test:ui      # UI de testing
+
+# Desarrollo (actualiza versión automáticamente)
+npm start
+
+# Build de producción (actualiza versión automáticamente)
+npm run build
+
+# Actualizar solo la versión sin ejecutar nada
+npm run version:update
+
+# Incrementar versión patch (0.1.0 -> 0.1.1)
+npm run version:patch
+
+# Incrementar versión minor (0.1.0 -> 0.2.0)
+npm run version:minor
+
+# Incrementar versión major (0.1.0 -> 1.0.0)
+npm run version:major
+
+npm install -g serve
+serve -s build
+
 ```
 
 ## 🎨 Diseño y UX
